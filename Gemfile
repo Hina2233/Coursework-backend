@@ -61,3 +61,5 @@ end
 
 
 gem 'administrate', '~> 0.20.1'
+gem 'devise', '~> 4.9', '>= 4.9.3'
+gem 'jwt', '~> 1.5', '>= 1.5.4'
