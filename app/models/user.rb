@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  has_many :ideas
+  has_many :votes
+  has_many :comments
   # Devise modules
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
