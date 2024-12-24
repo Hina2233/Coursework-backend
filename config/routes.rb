@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
   devise_for :users
+  namespace :api do
+    namespace :v1 do
+      resources :users, only: [:create]
+      post 'users/login', to: 'users#login'
+    end
+  end
+
   namespace :admin do
       resources :users
 
