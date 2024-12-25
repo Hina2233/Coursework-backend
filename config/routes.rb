@@ -4,6 +4,16 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users, only: [:create]
       post 'users/login', to: 'users#login'
+      resources :ideas do
+        # Nested routes for comments within ideas
+        resources :comments, only: [:index, :create, :update, :destroy]
+
+        # Route for voting on ideas
+        member do
+          post :vote
+        end
+      end
+
     end
   end
 
