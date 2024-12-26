@@ -19,11 +19,11 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :users
     resources :ideas
-    root to: "users#index" # Admin root route
+    root to: 'users#index' # Admin root path
   end
 
-  # Main root route
-  root to: "users#index" # Root for the main application
+  # Set the main root to redirect to the admin dashboard
+  root to: 'admin/users#index' # This redirects the root to admin panel
 
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
