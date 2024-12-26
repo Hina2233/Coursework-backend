@@ -18,7 +18,11 @@ Rails.application.routes.draw do
   # Admin routes
   namespace :admin do
     resources :users
-    resources :ideas
+    resources :ideas do
+      member do
+        post :toggle_shortlisted
+      end
+    end
     root to: 'users#index' # Admin root path
   end
 
