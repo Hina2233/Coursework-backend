@@ -1,0 +1,30 @@
+<h2 style="text-align: center; margin-bottom: 20px;">Log in</h2>
+
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f7fc; padding: 0 15px;">
+  <div style="width: 100%; max-width: 400px; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+
+      <div class="field" style="margin-bottom: 15px;">
+        <%= f.label :email, style: "font-weight: bold;" %><br />
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", style: "width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;" %>
+      </div>
+
+      <div class="field" style="margin-bottom: 15px;">
+        <%= f.label :password, style: "font-weight: bold;" %><br />
+        <%= f.password_field :password, autocomplete: "current-password", style: "width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="field" style="margin-bottom: 15px;">
+          <%= f.check_box :remember_me, style: "margin-right: 10px;" %>
+          <%= f.label :remember_me, style: "font-weight: normal;" %>
+        </div>
+      <% end %>
+
+      <div class="actions" style="margin-top: 20px;">
+        <%= f.submit "Log in", style: "width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" %>
+      </div>
+    <% end %>
+
+  </div>
+</div>
