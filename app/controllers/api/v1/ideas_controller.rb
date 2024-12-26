@@ -48,20 +48,27 @@ class Api::V1::IdeasController < ApiController
 
   # Vote for an idea (upvote or downvote)
   def vote
-    vote_type = params[:vote_type] # Expect `1` for upvote or `-1` for downvote
-    unless [1, -1].include?(vote_type.to_i)
-      render json: { errors: ['Invalid vote type'] }, status: :unprocessable_entity and return
+    vote_type = params[:vote_type] # Expect `up` or `down`
+
+    # Check if the vote type is valid according to enum
+    unless Vote.vote_types.keys.include?(vote_type)
+      render json: { errors: ['Invalid vote type. Must be "up" or "down"'] }, status: :unprocessable_entity and return
     end
 
+    # Check if the user has already voted
     existing_vote = Vote.find_by(user_id: current_user.id, idea_id: @idea.id)
+
     if existing_vote
-      if existing_vote.vote_type == vote_type.to_i
+      # If the user has already voted, check if the vote type is the same
+      if existing_vote.vote_type == vote_type
         render json: { errors: ['You have already voted this way for this idea'] }, status: :unprocessable_entity
       else
+        # If the user is changing their vote, update the vote type
         existing_vote.update(vote_type: vote_type)
         render json: { message: 'Vote updated successfully', vote: existing_vote }, status: :ok
       end
     else
+      # Create a new vote for the user and idea
       vote = @idea.votes.create(user_id: current_user.id, vote_type: vote_type)
       render json: { message: 'Vote added successfully', vote: vote }, status: :created
     end
