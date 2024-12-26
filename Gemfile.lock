@@ -338,7 +338,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jwt (~> 1.5, >= 1.5.4)
-  pg
+  pg (~> 1.1)
   puma (>= 5.0)
   rack-cors
   rails (~> 7.2.0)
