@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   # Admin routes
   namespace :admin do
     resources :users
+    resources :comments
+    resources :votes
     resources :ideas do
       member do
         post :toggle_shortlisted
