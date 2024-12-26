@@ -2,15 +2,28 @@ class Api::V1::IdeasController < ApiController
   before_action :authenticate_user!
   before_action :set_idea, only: [:show, :update, :destroy, :vote]
 
-  # List all ideas
+  # List all approved ideas with calculated points and shortlisted flag
   def index
-    ideas = Idea.includes(:user, :comments, :votes).all
-    render json: ideas, status: :ok
+    ideas = Idea.includes(:user, :comments, :votes)
+                .where(approved: true)  # Filter for approved ideas
+    ideas_with_details = ideas.map do |idea|
+      # Calculate points for each idea
+      points = calculate_points(idea)
+      idea.as_json.merge(
+        is_shortlisted: idea.is_shortlisted, # Use the existing database field
+        points: points
+      )
+    end
+    render json: ideas_with_details, status: :ok
   end
 
-  # Show a specific idea
+  # Show a specific approved idea with calculated points and shortlisted flag
   def show
-    render json: @idea, include: [:user, :comments, :votes], status: :ok
+    points = calculate_points(@idea)
+    render json: @idea.as_json.merge(
+      is_shortlisted: @idea.is_shortlisted, # Use the existing database field
+      points: points
+    ), status: :ok
   end
 
   # Create a new idea
@@ -85,5 +98,19 @@ class Api::V1::IdeasController < ApiController
   # Strong parameters
   def idea_params
     params.require(:idea).permit(:title, :description)
+  end
+
+  # Calculate the points for an idea
+  def calculate_points(idea)
+    # Points for comments
+    points_from_comments = idea.comments.count * 20
+
+    # Points for votes (upvotes and downvotes)
+    upvotes = idea.votes.where(vote_type: 'up').count * 10
+    downvotes = idea.votes.where(vote_type: 'down').count * -10
+
+    # Total points
+    points = points_from_comments + upvotes + downvotes
+    points
   end
 end
