@@ -1,42 +1,34 @@
 Rails.application.routes.draw do
   devise_for :users
+
+  # API routes
   namespace :api do
     namespace :v1 do
       resources :users, only: [:create]
       post 'users/login', to: 'users#login'
       resources :ideas do
-        # Nested routes for comments within ideas
         resources :comments, only: [:index, :create, :update, :destroy]
-
-        # Route for voting on ideas
         member do
           post :vote
         end
       end
-
     end
   end
 
+  # Admin routes
   namespace :admin do
-      resources :users
-      resources :ideas
-
-      root to: "users#index"
+    resources :users
+    resources :ideas
+    root to: "users#index" # Admin root route
   end
 
-  get '/', to: "users#index"
+  # Main root route
+  root to: "users#index" # Root for the main application
 
-
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/*
+  # Dynamic PWA files
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
