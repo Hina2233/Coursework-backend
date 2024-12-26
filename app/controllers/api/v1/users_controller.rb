@@ -1,4 +1,4 @@
-class Api::V1::UsersController < ApplicationController
+class Api::V1::UsersController < ApiController
   # For JWT authentication
   before_action :authenticate_user!, except: [:create, :login]
 

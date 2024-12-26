@@ -1,4 +1,4 @@
-class Api::V1::CommentsController < ApplicationController
+class Api::V1::CommentsController < ApiController
   before_action :authenticate_user!
   before_action :set_idea
   before_action :set_comment, only: [:update, :destroy]

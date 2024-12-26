@@ -1,4 +1,4 @@
-class Api::V1::IdeasController < ApplicationController
+class Api::V1::IdeasController < ApiController
   before_action :authenticate_user!
   before_action :set_idea, only: [:show, :update, :destroy, :vote]
 
