@@ -17,7 +17,7 @@ class Api::V1::UsersController < ApiController
     user = User.find_by(email: params[:email])
     if user&.valid_password?(params[:password])
       token = JsonWebToken.encode(user_id: user.id)
-      render json: { message: 'Login successful', token: token, user: user }, status: :ok
+      render json: { message: 'Login successful', token: token, user: { id: user.id, email: user.email, role: user.role } }, status: :ok
     else
       render json: { errors: ['Invalid email or password'] }, status: :unauthorized
     end
