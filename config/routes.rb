@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "home/index"
   devise_for :users
 
   # API routes
@@ -23,11 +24,10 @@ Rails.application.routes.draw do
         post :toggle_shortlisted
       end
     end
-    root to: 'users#index' # Admin root path
   end
 
-  # Set the main root to redirect to the admin dashboard
-  root to: 'admin/users#index' # This redirects the root to admin panel
+  # Redirect to the correct page after login
+  root to: 'home#index'  # Redirects to home#index by default
 
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check

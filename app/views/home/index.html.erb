@@ -1,0 +1,6 @@
+<h1>Welcome to the Home Page</h1>
+<% if user_signed_in? %>
+  <p>You are signed in!</p>
+<% else %>
+  <p>You are not signed in. <a href="<%= new_user_session_path %>">Log in</a></p>
+<% end %>

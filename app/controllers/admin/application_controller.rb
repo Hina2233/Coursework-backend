@@ -13,8 +13,8 @@ module Admin
     private
 
     def authenticate_admin
-      unless current_user&.admin?
-        redirect_to new_user_session_path, alert: 'You are not authorized to access the Admin panel.'
+      unless current_user&.admin?  # This checks if the role is 'admin'
+        redirect_to root_path, alert: 'You are not authorized to access the Admin panel.'
       end
     end
 
