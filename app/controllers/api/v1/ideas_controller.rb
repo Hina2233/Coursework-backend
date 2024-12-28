@@ -118,11 +118,11 @@ class Api::V1::IdeasController < ApiController
   # Calculate the points for an idea
   def calculate_points(idea)
     # Points for comments
-    points_from_comments = idea.comments.count * 20
+    points_from_comments = idea.comments.count * 10
 
     # Points for votes (upvotes and downvotes)
-    upvotes = idea.votes.where(vote_type: 'up').count * 10
-    downvotes = idea.votes.where(vote_type: 'down').count * -10
+    upvotes = idea.votes.where(vote_type: 'up').count * 50
+    downvotes = idea.votes.where(vote_type: 'down').count * -50
 
     # Total points
     points = points_from_comments + upvotes + downvotes
