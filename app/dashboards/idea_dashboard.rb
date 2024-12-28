@@ -12,6 +12,7 @@ class IdeaDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     is_shortlisted: Field::Boolean, # Field for shortlisted status
+    approved: Field::Boolean, # Field for shortlisted status
     upvotes_count: Field::Number, # Display the upvotes count
     downvotes_count: Field::Number # Display the downvotes count
   }.freeze
@@ -22,6 +23,7 @@ class IdeaDashboard < Administrate::BaseDashboard
     title
     description
     is_shortlisted
+    approved
     upvotes_count
     downvotes_count
   ].freeze
@@ -36,6 +38,7 @@ class IdeaDashboard < Administrate::BaseDashboard
   upvotes_count
   downvotes_count
   is_shortlisted
+  approved
   created_at
   updated_at
 ].freeze
@@ -46,6 +49,7 @@ class IdeaDashboard < Administrate::BaseDashboard
   description
   user
   is_shortlisted
+  approved
 ].freeze
 
   # CUSTOM METHODS
