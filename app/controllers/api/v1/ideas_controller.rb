@@ -17,6 +17,21 @@ class Api::V1::IdeasController < ApiController
     render json: ideas_with_details, status: :ok
   end
 
+  # List ideas created by the current user
+  def my_ideas
+    # Get ideas created by the current user
+    ideas = current_user.ideas.includes(:comments, :votes)
+    ideas_with_details = ideas.map do |idea|
+      # Calculate points for each idea
+      points = calculate_points(idea)
+      idea.as_json.merge(
+        is_shortlisted: idea.is_shortlisted, # Use the existing database field
+        points: points
+      )
+    end
+    render json: ideas_with_details, status: :ok
+  end
+
   # Show a specific approved idea with calculated points and shortlisted flag
   def show
     points = calculate_points(@idea)

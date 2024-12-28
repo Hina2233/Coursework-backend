@@ -8,6 +8,9 @@ Rails.application.routes.draw do
       resources :users, only: [:create]
       post 'users/login', to: 'users#login'
       resources :ideas do
+        collection do
+          get 'my_ideas', to: 'ideas#my_ideas'  # Add this line for current user's ideas
+        end
         resources :comments, only: [:index, :create, :update, :destroy]
         member do
           post :vote
