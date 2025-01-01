@@ -4,7 +4,17 @@ class Api::V1::UsersController < ApiController
 
   # User signup
   def create
-    user = User.new(user_params)
+    # Validate role if provided in params, default to 'employee' if not
+    role = params[:user][:role].presence || 'employee'
+
+    # Ensure the role is valid according to the enum
+    unless User.roles.keys.include?(role)
+      return render json: { errors: ['Invalid role'] }, status: :unprocessable_entity
+    end
+
+    # Create the user with the validated role
+    user = User.new(user_params.merge(role: role))
+
     if user.save
       render json: { message: 'User created successfully', user: user }, status: :created
     else
