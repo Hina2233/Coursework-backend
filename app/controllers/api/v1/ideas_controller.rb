@@ -5,13 +5,13 @@ class Api::V1::IdeasController < ApiController
   # List all approved ideas with calculated points and shortlisted flag
   def index
     ideas = Idea.includes(:user, :comments, :votes)
-                .where(approved: true)  # Filter for approved ideas
+                .where(approved: true) # Filter for approved ideas
     ideas_with_details = ideas.map do |idea|
-      # Calculate points for each idea
       points = calculate_points(idea)
       idea.as_json.merge(
-        is_shortlisted: idea.is_shortlisted, # Use the existing database field
-        points: points
+        is_shortlisted: idea.is_shortlisted,
+        points: points,
+        region: idea.region # Include region in the response
       )
     end
     render json: ideas_with_details, status: :ok
@@ -19,14 +19,13 @@ class Api::V1::IdeasController < ApiController
 
   # List ideas created by the current user
   def my_ideas
-    # Get ideas created by the current user
     ideas = current_user.ideas.includes(:comments, :votes)
     ideas_with_details = ideas.map do |idea|
-      # Calculate points for each idea
       points = calculate_points(idea)
       idea.as_json.merge(
-        is_shortlisted: idea.is_shortlisted, # Use the existing database field
-        points: points
+        is_shortlisted: idea.is_shortlisted,
+        points: points,
+        region: idea.region # Include region in the response
       )
     end
     render json: ideas_with_details, status: :ok
@@ -36,8 +35,9 @@ class Api::V1::IdeasController < ApiController
   def show
     points = calculate_points(@idea)
     render json: @idea.as_json.merge(
-      is_shortlisted: @idea.is_shortlisted, # Use the existing database field
-      points: points
+      is_shortlisted: @idea.is_shortlisted,
+      points: points,
+      region: @idea.region # Include region in the response
     ), status: :ok
   end
 
@@ -51,9 +51,9 @@ class Api::V1::IdeasController < ApiController
     end
   end
 
-  # Update an idea
+  # Update an idea (including is_shortlisted for managers)
   def update
-    if @idea.user_id == current_user.id
+    if @idea.user_id == current_user.id || current_user.manager?
       if @idea.update(idea_params)
         render json: { message: 'Idea updated successfully', idea: @idea }, status: :ok
       else
@@ -78,25 +78,20 @@ class Api::V1::IdeasController < ApiController
   def vote
     vote_type = params[:vote_type] # Expect `up` or `down`
 
-    # Check if the vote type is valid according to enum
     unless Vote.vote_types.keys.include?(vote_type)
       render json: { errors: ['Invalid vote type. Must be "up" or "down"'] }, status: :unprocessable_entity and return
     end
 
-    # Check if the user has already voted
     existing_vote = Vote.find_by(user_id: current_user.id, idea_id: @idea.id)
 
     if existing_vote
-      # If the user has already voted, check if the vote type is the same
       if existing_vote.vote_type == vote_type
         render json: { errors: ['You have already voted this way for this idea'] }, status: :unprocessable_entity
       else
-        # If the user is changing their vote, update the vote type
         existing_vote.update(vote_type: vote_type)
         render json: { message: 'Vote updated successfully', vote: existing_vote }, status: :ok
       end
     else
-      # Create a new vote for the user and idea
       vote = @idea.votes.create(user_id: current_user.id, vote_type: vote_type)
       render json: { message: 'Vote added successfully', vote: vote }, status: :created
     end
@@ -112,20 +107,14 @@ class Api::V1::IdeasController < ApiController
 
   # Strong parameters
   def idea_params
-    params.require(:idea).permit(:title, :description)
+    params.require(:idea).permit(:title, :description, :region, :is_shortlisted)
   end
 
   # Calculate the points for an idea
   def calculate_points(idea)
-    # Points for comments
     points_from_comments = idea.comments.count * 10
-
-    # Points for votes (upvotes and downvotes)
     upvotes = idea.votes.where(vote_type: 'up').count * 50
     downvotes = idea.votes.where(vote_type: 'down').count * -50
-
-    # Total points
-    points = points_from_comments + upvotes + downvotes
-    points
+    points_from_comments + upvotes + downvotes
   end
 end

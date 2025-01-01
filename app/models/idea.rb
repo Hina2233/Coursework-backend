@@ -4,6 +4,7 @@ class Idea < ApplicationRecord
   has_many :votes, dependent: :destroy
 
   validates :title, presence: true
+  validates :region, presence: true
   validates :description, presence: true
 
   # Boolean flag to mark an idea as shortlisted (favorite)

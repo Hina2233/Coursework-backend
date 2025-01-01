@@ -13,6 +13,10 @@ class User < ApplicationRecord
   # Callback to set full name
   before_save :set_full_name
 
+  def manager?
+    role == 'manager'
+  end
+
   def set_full_name
     self.full_name = "#{first_name} #{last_name}"
   end
