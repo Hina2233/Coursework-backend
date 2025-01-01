@@ -6,6 +6,7 @@ class Idea < ApplicationRecord
   validates :title, presence: true
   validates :region, presence: true
   validates :description, presence: true
+  validates :colaborative, inclusion: { in: [true, false] }
 
   # Boolean flag to mark an idea as shortlisted (favorite)
   attribute :is_shortlisted, :boolean, default: false

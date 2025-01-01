@@ -53,7 +53,7 @@ class Api::V1::IdeasController < ApiController
 
   # Update an idea (including is_shortlisted for managers)
   def update
-    if @idea.user_id == current_user.id || current_user.manager?
+    if @idea.user_id == current_user.id || current_user.manager? || @idea.colaborative?
       if @idea.update(idea_params)
         render json: { message: 'Idea updated successfully', idea: @idea }, status: :ok
       else
@@ -107,7 +107,7 @@ class Api::V1::IdeasController < ApiController
 
   # Strong parameters
   def idea_params
-    params.require(:idea).permit(:title, :description, :region, :is_shortlisted)
+    params.require(:idea).permit(:title, :description, :region, :is_shortlisted, :colaborative)
   end
 
   # Calculate the points for an idea
